@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 
 class Mipssim
 {
@@ -13,6 +14,9 @@ class Mipssim
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         
         //declare hash
+        HashMap<String, String> item = new HashMap<>();
+        
+        
         while( dis.available() >0 ) {
             int x = 0;
             x =  dis.readInt() ;
@@ -39,7 +43,7 @@ class Mipssim
                 item['func'] = x & 0x0000003F;
                 //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
                 opcode = item['opcode'];
-                //need to correct formating
+                //need to correct formating from python to java
               if (item['valid'] == 0){
                     System.out.print('Invalid Instruction') 
                   }
@@ -53,7 +57,7 @@ class Mipssim
                      System.out.print('LW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) )
                   }
              else{
-                     print( opcode )
+                     System.out.print( opcode )
                  }
              MEM[addr] = item
                     
