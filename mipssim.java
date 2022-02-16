@@ -31,16 +31,16 @@ class Mipssim
                     
                  binstr = Integer.toHexString(x);
                  System.out.println(binstr);
-                item['asInt'] = x;
+                item.put("asInt", Integer.toString(x));
                 //item['asUint'] = ;
-                item['str'] = binstr;
-                item['valid'] = x >> 31;
-                item['opcode'] = x >> 26;
-                item['rs'] = (x >> 21) & 0x0000001F);
-                item['rt'] = (x >> 16) & 0x0000001F);
-                item['rd'] = (x >> 11) & 0x0000001F);
-                item['shamt'] = (x >> 6) 0x0000001F);
-                item['func'] = x & 0x0000003F;
+                item.put("str", binstr);
+                item.put("valid", Integer.toString( x >> 31));
+                item.put['opcode'] = x >> 26;
+                item.put['rs'] = (x >> 21) & 0x0000001F);
+                item.putj'rt'] = (x >> 16) & 0x0000001F);
+                item.put['rd'] = (x >> 11) & 0x0000001F);
+                item.put['shamt'] = (x >> 6) 0x0000001F);
+                item.put("func" = x & 0x0000003F;
                 //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
                 opcode = item['opcode'];
                 //need to correct formating from python to java
