@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 
 class Mipssim
 {
@@ -14,18 +14,16 @@ class Mipssim
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         
         //declare hash
-        HashMap<String, String> item = new HashMap<>();
+        //array of hashes
+        Hashtable<String, String> item = new Hashtable<String, String>();
         
         
-        while( dis.available() >0 ) {
+        while( dis.available() > 0 ) {
             int x = 0;
             x =  dis.readInt() ;
-            System.out.println("int: " + x);
-            System.out.println((x>>26) & 0x0000003F);
-            System.out.println(((x<<6)>>27) & 0x0000001F);
-            
+     
             //do not know how to format for loop
-            for(int i = 0; i < ... , i+4){
+            for(int i = 0; i < ... , i + 4){
                 int addr = 96 + i;
                 item = //hash
                     
