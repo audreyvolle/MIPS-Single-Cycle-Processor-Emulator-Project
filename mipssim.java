@@ -24,7 +24,14 @@ class Mipssim
             x =  dis.readInt() ;
             String binstr = Integer.toBinaryString(x);
             binstr = String.format("%32s", binstr).replace(' ', '0');
-            System.out.print(binstr);
+            //System.out.print(binstr);
+            System.out.print(binstr.charAt(0)+" ");
+            System.out.print(binstr.substring(1,6)+" ");
+            System.out.print(binstr.substring(6,11)+" ");
+            System.out.print(binstr.substring(11,16)+" ");
+            System.out.print(binstr.substring(16,21)+" ");
+            System.out.print(binstr.substring(21,26)+" ");
+            System.out.print(binstr.substring(26,32)+" ");
             System.out.print(" " + addr + " "); //correct format
 
             item.put("asInt", x);
