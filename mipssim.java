@@ -13,74 +13,78 @@ class Mipssim
         File file = new File(args[0]);
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         
-        //declare hash
+      //declare hash
         //array of hashes
-        Hashtable<String, String> item = new Hashtable<String, String>();
-        
+        Hashtable<String, Integer> item = new Hashtable<String, Integer>();
+        int i = 0;
         
         while( dis.available() > 0 ) {
+            int addr = 96 + i;
             int x = 0;
             x =  dis.readInt() ;
-     
-            //do not know how to format for loop
-            for(int i = 0; i < ... , i + 4){
-                int addr = 96 + i;
-                item = //hash
-                    
-                 binstr = Integer.toHexString(x);
-                 System.out.println(binstr);
-                item.put("asInt", Integer.toString(x));
-                //item['asUint'] = ;
-                item.put("str", binstr);
-                item.put("valid", Integer.toString( x >> 31));
-                item.put['opcode'] = x >> 26;
-                item.put['rs'] = (x >> 21) & 0x0000001F);
-                item.putj'rt'] = (x >> 16) & 0x0000001F);
-                item.put['rd'] = (x >> 11) & 0x0000001F);
-                item.put['shamt'] = (x >> 6) 0x0000001F);
-                item.put("func" = x & 0x0000003F;
-                //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
-                opcode = item['opcode'];
-                //need to correct formating from python to java
-              if (item['valid'] == 0){
-                    System.out.print('Invalid Instruction') 
-                  }
-                else if(opcode == 40){
-                    System.out.print('ADDI\tR{0}, R{1}, #{2} '.format(item['rt'], item['rs'], item['imm']) )
-                   }
-              else if(opcode == 43){
-                     System.out.print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) )
-                  }
-             else if(opcode == 35){
-                     System.out.print('LW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) )
-                  }
-             else{
-                     System.out.print( opcode )
-                 }
-             MEM[addr] = item
-                    
-                
-            }
-            //end of first part
+            String binstr = Integer.toBinaryString(x);
+            binstr = String.format("%32s", binstr).replace(' ', '0');
+            System.out.print(binstr);
+            System.out.print(" " + addr + " "); //correct format
+
+            item.put("asInt", x);
+            //item.put("str", binstr);
+            item.put("valid", ( x >> 31));
+            item.put("opcode", (x >> 26)  & 0x0000003F);
+            item.put("rs" , ((x >> 21) & 0x0000001F));
+            item.put("rt", ((x >> 16) & 0x0000001F));
+            item.put("rd", ((x >> 11) & 0x0000001F));
+            item.put("shamt",  ((x >> 6) & 0x0000001F));
+            item.put("func", (x & 0x0000003F));
+            //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
+
+            Integer opcode = item.get("opcode");
             
-        }
-        dis.close();
-        
+            //correct format
+            if(item.get("valid") == 0){
+                System.out.print("Invalid Instruction");
+            }
+            else if(opcode == 40){
+                //addi
+                System.out.print("Addi " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 43){
+                //sw
+                System.out.print("sw " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 35){
+                //lw
+                System.out.print("lw " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 33){
+                //bltz
+                System.out.print("BLTZ " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 32){
+                //sub
+                System.out.print("SUB " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 34){
+                //J
+                System.out.print("J " + item.get("rt") + " " + item.get("rs"));
+            }
+            else{
+                System.out.print(opcode);
+            }
+
+                System.out.println();
+                //MEM[addr] = item ----> need to make array or something to store each item???
+                i = i+4;
+            }
+            dis.close();
+
+
+            //p2
         
         R = [0] * 32;
         int PC = 96;
         int cycle = 1;
         
-        while(true){
-            
-            
-            
-            
-            
-            
-            
-            if (cycle > 1){
-                break;
             }
         }
     }
