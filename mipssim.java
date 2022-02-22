@@ -5,17 +5,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map;
 
-class Mipssim
-{
+
+public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException
     {
         File file = new File(args[0]);
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         
-      //declare hash
-        //array of hashes
+        
         Hashtable<String, Integer> item = new Hashtable<String, Integer>();
+        Map<Integer, Hashtable<String, Integer>> MEM = new HashMap<Integer, Hashtable<String, Integer>>();
         int i = 0;
         
         while( dis.available() > 0 ) {
@@ -24,7 +25,12 @@ class Mipssim
             x =  dis.readInt() ;
             String binstr = Integer.toBinaryString(x);
             binstr = String.format("%32s", binstr).replace(' ', '0');
-            //System.out.print(binstr);
+            if(binstr.substring(0,15).equals("111111111111111") || binstr.substring(0,15).equals("000000000000000"))
+            {
+                System.out.print(binstr);
+                System.out.println("	"+ addr +"	");
+                addr=addr+4;
+            } else {
             System.out.print(binstr.charAt(0)+" ");
             System.out.print(binstr.substring(1,6)+" ");
             System.out.print(binstr.substring(6,11)+" ");
@@ -32,7 +38,8 @@ class Mipssim
             System.out.print(binstr.substring(16,21)+" ");
             System.out.print(binstr.substring(21,26)+" ");
             System.out.print(binstr.substring(26,32)+" ");
-            System.out.print(" " + addr + " "); //correct format
+            //System.out.print(binstr);
+             System.out.print(" " + addr + " "); //correct format
 
             item.put("asInt", x);
             //item.put("str", binstr);
@@ -74,25 +81,50 @@ class Mipssim
             else if(opcode == 34){
                 //J
                 System.out.print("J " + item.get("rt") + " " + item.get("rs"));
+                //System.out.print("J " + item.get("rt") + " " + item.get("rs"));
+            }
+            else if(opcode == 60){
+                //MUL
+                System.out.print("MUL" + item.get("rt") + " " + item.get("rs"));
             }
             else{
                 System.out.print(opcode);
             }
 
                 System.out.println();
-                //MEM[addr] = item ----> need to make array or something to store each item???
+                MEM.put(addr, item); //----> need to make array or something to store each item???
                 i = i+4;
+                }
             }
+
             dis.close();
 
-
+/*
             //p2
-        
-        R = [0] * 32;
-        int PC = 96;
-        int cycle = 1;
-        
-            }
+            int[] R = new int[32];
+            Arrays.fill(R, 0);
+            
+            int PC = 96;
+            int cycle = 1;
+
+while (true){
+
+     Hashtable<String, Integer> I = MEM.get(PC);
+    while (item.get("valid") == 0){
+        PC +=4;
+        I = MEM.get(PC);
+        int opcode = I.get("opcode");
+        if (opcode == 40){ //ADDI
+             R[I.get("rt")] = R[ I.get("rs")]  + I.get("imm");
+        }
+        else if (opcode == 43){ //SW
+            //MEM[  R[ I.get("rs")] +  I.get("imm") ][I.get("asInt")]= R[ I.get("rt")  ]   ; ----> i don't even know what this is supposed to do
+             //print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) );
         }
     }
+    if (cycle > 1){
+     break;
+    }
+}*/
+    } 
 }
