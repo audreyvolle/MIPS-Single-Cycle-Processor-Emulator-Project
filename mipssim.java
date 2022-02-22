@@ -28,8 +28,9 @@ public class mipssim {
             if(binstr.substring(0,15).equals("111111111111111") || binstr.substring(0,15).equals("000000000000000"))
             {
                 System.out.print(binstr);
-                System.out.println("	"+ addr +"	");
-                addr=addr+4;
+                System.out.printf("%11.5s", addr );
+                System.out.println();
+                i=i+4;
             } else {
             System.out.print(binstr.charAt(0)+" ");
             System.out.print(binstr.substring(1,6)+" ");
@@ -37,9 +38,9 @@ public class mipssim {
             System.out.print(binstr.substring(11,16)+" ");
             System.out.print(binstr.substring(16,21)+" ");
             System.out.print(binstr.substring(21,26)+" ");
-            System.out.print(binstr.substring(26,32)+" ");
+            System.out.print(binstr.substring(26,32)+"  ");
             //System.out.print(binstr);
-             System.out.print(" " + addr + " "); //correct format
+             System.out.printf("%-5.5s %-2s", addr, ""); //correct format
 
             item.put("asInt", x);
             //item.put("str", binstr);
@@ -51,42 +52,81 @@ public class mipssim {
             item.put("shamt",  ((x >> 6) & 0x0000001F));
             item.put("func", (x & 0x0000003F));
             //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
+            //item.put("imm", );
 
             Integer opcode = item.get("opcode");
             
             //correct format
-            if(item.get("valid") == 0){
+            if(binstr.charAt(0)=='0'){
+                // In IN done
                 System.out.print("Invalid Instruction");
             }
-            else if(opcode == 40){
-                //addi
-                System.out.print("Addi " + item.get("rt") + " " + item.get("rs"));
+            else if(binstr.substring(1,6).equals("01000")){
+                //addi need immediate
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "ADDI", item.get("rt") + ",", item.get("rs") + ",", item.get("func") );
             }
-            else if(opcode == 43){
+            else if(binstr.substring(1,6).equals("01011")){
                 //sw
-                System.out.print("sw " + item.get("rt") + " " + item.get("rs"));
+                System.out.printf("%-7s R%-2s %s R%s", "SW", item.get("rt") + ",", item.get("shamt") + "(", item.get("rs") + ")" );
             }
-            else if(opcode == 35){
+            else if(binstr.substring(1,6).equals("00011")){
                 //lw
-                System.out.print("lw " + item.get("rt") + " " + item.get("rs"));
+                System.out.printf("%-7s R%-2s %s R%s", "SW", item.get("rt") + ",", item.get("shamt") + "(", item.get("rs") + ")" );
             }
-            else if(opcode == 33){
-                //bltz
-                System.out.print("BLTZ " + item.get("rt") + " " + item.get("rs"));
-            }
-            else if(opcode == 32){
+            
+            else if(binstr.substring(26,32).equals("100010")){
                 //sub
-                System.out.print("SUB " + item.get("rt") + " " + item.get("rs"));
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "SUB", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
             }
-            else if(opcode == 34){
+            else if(binstr.substring(1,6).equals("00010")){
                 //J
-                System.out.print("J " + item.get("rt") + " " + item.get("rs"));
                 //System.out.print("J " + item.get("rt") + " " + item.get("rs"));
+                System.out.printf("%-7s #%-2s", "J", item.get("shamt"));
             }
             else if(opcode == 60){
                 //MUL
-                System.out.print("MUL" + item.get("rt") + " " + item.get("rs"));
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MUL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
             }
+            else if(binstr.substring(0, 32).equals("10000000000000000000000000000000")){
+                //NOP done
+                System.out.print("NOP	");
+            }
+            else if(binstr.substring(26,32).equals("001010"))
+            {
+                //MOVZ
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MOVZ", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+            }
+            else if(binstr.substring(26,32).equals("000010"))
+            {
+                //SRL
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SRL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+            }
+            
+            else if(binstr.substring(26,32).equals("001000"))
+            {
+                //JR done
+                System.out.printf("%-7s R%-2s", "JR", item.get("rs"));
+            }
+            else if(binstr.substring(26,32).equals("000000"))
+            {
+                //SLL
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SLL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+            }
+            else if(binstr.substring(26,32).equals("100000"))
+            {
+                //ADD
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "ADD", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+            }
+            else if(binstr.substring(26,32).equals("001101"))
+            {
+                //BREAK done
+                System.out.print("BREAK");
+            }
+            else if(binstr.substring(16,21).equals("00000")){
+                //bltz NNEEDS FORMATTING
+                System.out.print("BLTZ " + item.get("rt") + " " + item.get("rs"));
+            }
+            
             else{
                 System.out.print(opcode);
             }
