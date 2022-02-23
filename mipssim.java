@@ -11,7 +11,7 @@ import java.util.Map;
 public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException
     {
-        File file = new File(args[0]);
+        File file = new File("test3.bin");
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         
         
@@ -28,7 +28,7 @@ public class mipssim {
             if(binstr.substring(0,15).equals("111111111111111") || binstr.substring(0,15).equals("000000000000000"))
             {
                 System.out.print(binstr);
-                System.out.printf("%11.5s", addr );
+                System.out.printf("%11.5s %-2s  %-7s", addr, "",x);
                 System.out.println();
                 i=i+4;
             } else {
@@ -52,7 +52,10 @@ public class mipssim {
             item.put("shamt",  ((x >> 6) & 0x0000001F));
             item.put("func", (x & 0x0000003F));
             //item['imm'] = struct.unpack_from( '>h', data, i+2)[0] // need to change to java
-            //item.put("imm", );
+            item.put("imm", x & 0xFFFF);
+            item.put("offset", item.get("imm") << 2);
+            item.put("target", (x  <<2) & 0xFF);
+            
 
             Integer opcode = item.get("opcode");
             
@@ -63,69 +66,70 @@ public class mipssim {
             }
             else if(binstr.substring(1,6).equals("01000")){
                 //addi need immediate
-                System.out.printf("%-7s R%-2s R%-2s #%-2s", "ADDI", item.get("rt") + ",", item.get("rs") + ",", item.get("func") );
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "ADDI", item.get("rt") + ",", item.get("rs") + ",", item.get("imm") );
             }
             else if(binstr.substring(1,6).equals("01011")){
                 //sw
-                System.out.printf("%-7s R%-2s %s R%s", "SW", item.get("rt") + ",", item.get("shamt") + "(", item.get("rs") + ")" );
+                System.out.printf("%-7s R%-2s %sR%s", "SW", item.get("rt") + ",", item.get("imm") + "(", item.get("rs") + ")" );
             }
             else if(binstr.substring(1,6).equals("00011")){
                 //lw
-                System.out.printf("%-7s R%-2s %s R%s", "SW", item.get("rt") + ",", item.get("shamt") + "(", item.get("rs") + ")" );
+                System.out.printf("%-7s R%-2s %sR%s", "LW", item.get("rt") + ",", item.get("imm") + "(", item.get("rs") + ")" );
             }
             
             else if(binstr.substring(26,32).equals("100010")){
                 //sub
-                System.out.printf("%-7s R%-2s R%-2s R%-2s", "SUB", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "SUB", item.get("rd") + ",", item.get("rs") + ",", item.get("rt") );
             }
             else if(binstr.substring(1,6).equals("00010")){
                 //J
                 //System.out.print("J " + item.get("rt") + " " + item.get("rs"));
-                System.out.printf("%-7s #%-2s", "J", item.get("shamt"));
+                System.out.printf("%-7s #%-2s", "J", item.get("target"));
             }
             else if(opcode == 60){
                 //MUL
-                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MUL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MUL", item.get("rd") + ",", item.get("rs") + ",", item.get("rt") );
             }
             else if(binstr.substring(0, 32).equals("10000000000000000000000000000000")){
                 //NOP done
-                System.out.print("NOP	");
+                System.out.print("NOP");
             }
             else if(binstr.substring(26,32).equals("001010"))
             {
                 //MOVZ
-                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MOVZ", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
-            }
-            else if(binstr.substring(26,32).equals("000010"))
-            {
-                //SRL
-                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SRL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
-            }
-            
-            else if(binstr.substring(26,32).equals("001000"))
-            {
-                //JR done
-                System.out.printf("%-7s R%-2s", "JR", item.get("rs"));
-            }
-            else if(binstr.substring(26,32).equals("000000"))
-            {
-                //SLL
-                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SLL", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
-            }
-            else if(binstr.substring(26,32).equals("100000"))
-            {
-                //ADD
-                System.out.printf("%-7s R%-2s R%-2s R%-2s", "ADD", item.get("rt") + ",", item.get("rs") + ",", item.get("rt") );
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "MOVZ", item.get("rd") + ",", item.get("rs") + ",", item.get("rt") );
             }
             else if(binstr.substring(26,32).equals("001101"))
             {
                 //BREAK done
                 System.out.print("BREAK");
             }
-            else if(binstr.substring(16,21).equals("00000")){
-                //bltz NNEEDS FORMATTING
-                System.out.print("BLTZ " + item.get("rt") + " " + item.get("rs"));
+            else if(binstr.substring(26,32).equals("001000"))
+            {
+                //JR done
+                System.out.printf("%-7s R%-2s", "JR", item.get("rs"));
             }
+            else if(binstr.substring(16,21).equals("00000")){
+                //bltz 
+                System.out.printf("%-7s R%-2s #%-2s", "BLTZ", item.get("rs") + ",", item.get("offset"));
+            }
+            else if(binstr.substring(26,32).equals("000010"))
+            {
+                //SRL
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SRL", item.get("rd") + ",", item.get("rt") + ",", item.get("shamt") );
+            }
+            else if(binstr.substring(26,32).equals("000000"))
+            {
+                //SLL
+                System.out.printf("%-7s R%-2s R%-2s #%-2s", "SLL", item.get("rd") + ",", item.get("rs") + ",", item.get("shamt") );
+            }
+            else if(binstr.substring(26,32).equals("100000"))
+            {
+                //ADD
+                System.out.printf("%-7s R%-2s R%-2s R%-2s", "ADD", item.get("rd") + ",", item.get("rs") + ",", item.get("rt") );
+            }
+            
+            
             
             else{
                 System.out.print(opcode);
