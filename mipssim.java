@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException {
-        File file = new File("test3.bin");
+        File file = new File("test1.bin");
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
 
         Hashtable<String, Integer> item = new Hashtable<String, Integer>();
@@ -129,20 +129,17 @@ public class mipssim {
         // p2
         int[] R = new int[32];
         Arrays.fill(R, 0);
+
+       
+        // I don't even know what the data is??? 
         int[] D = new int[32];
         Arrays.fill(D, 0);
-        //int PC = 96;
         int cycle = 1;
         /*
-        while (true) {
 
-            Hashtable<String, Integer> I = MEM.get(PC);
-            while (item.get("valid") == 0) {
-                PC += 4;
+            
                 I = MEM.get(PC);
                 int opcode = I.get("opcode");
-                System.out.println("====================");
-                System.out.printf("cycle:%3.5s%3s", cycle, PC);
                 if (opcode == 40) { // ADDI
                     R[I.get("rt")] = R[I.get("rs")] + I.get("imm");
                 } else if (opcode == 43) { // SW
@@ -150,28 +147,72 @@ public class mipssim {
                     // ----> i don't even know what this is supposed to do
                     // print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) );
                 }
-            }
-            if (cycle > 1) {
-                break;
-            }
-        }
             */
 
             File file2 = new File("test1_dis.txt");
-            //DataInputStream sim = new DataInputStream(new FileInputStream(file2));
             Scanner sim = new Scanner(file2);
             String ins = "";
             while (sim.hasNextLine()) {
                 
                 ins = sim.nextLine();
-                if( !ins.contains("BREAK")){
-                String addr = ins.substring(39, 43);
+                if( !ins.contains("Invalid")){
+                String addr = ins.substring(39, 42);
                 String mips = ins.substring(43);
+
+                Hashtable<String, Integer> I = MEM.get(Integer.parseInt(addr));
+
                 System.out.println();
                 System.out.println("====================");
-                System.out.printf("cycle:%-2s %-2s%-2s", cycle, addr, mips);
+                System.out.printf("cycle:%-2s%-2s%5s%s", cycle, addr,"" ,mips);
                 System.out.println();
                 //If satements to alter the R array and D array
+                    if(ins.contains("ADDI")){
+                        //not correct and i dont know why
+                        R[I.get("rt")]=R[I.get("rs")]+I.get("imm");
+                    }/*
+                    //some of these instructions do not change anything so we might not need
+                    //to include them. 
+                    else if(ins.contains("SW")){
+
+                    }
+                    else if(ins.contains("LW")){
+
+                    }
+                    else if(ins.contains("SUB")){
+
+                    }
+                    else if(ins.contains("J")){
+
+                    }
+                    else if(ins.contains("MUL")){
+
+                    }
+                    else if(ins.contains("NOP")){
+
+                    }
+                    else if(ins.contains("MOVZ")){
+
+                    }
+                    else if(ins.contains("BREAK")){
+
+                    }
+                    else if(ins.contains("JR")){
+
+                    }
+                    else if(ins.contains("BLTZ")){
+                        //no change
+                    }
+                    else if(ins.contains("SRL")){
+
+                    }
+                    else if(ins.contains("SLL")){
+
+                    }
+                    else if(ins.contains("ADD")){
+
+                    }
+
+                    */
 
                     printRegisters(R);
                     System.out.println();
@@ -194,10 +235,10 @@ public class mipssim {
         for(int l = 0; l < 32; l++){
             if(l % 8 == 0){
                 System.out.println();
-                System.out.printf("r%2.5s", reg);
+                System.out.printf("r%2.5s", reg); // not correct spacing need to replace spaces with 0
                 reg = reg + 8;
             }
-            System.out.printf("%2s", R[l]);
+            System.out.printf("%2s", R[l]); // not correct spacing
 
         }
     }
@@ -208,10 +249,10 @@ public class mipssim {
         for(int l = 0; l < 32; l++){
             if(l % 8 == 0){
                 System.out.println();
-                System.out.printf("%2.5s", data);
+                System.out.printf("%2.5s", data); //ditto
                 data = data + 32;
             }
-            System.out.printf("%2s", D[l]);
+            System.out.printf("%2s", D[l]); //ditto
 
         }
     }
