@@ -7,15 +7,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.util.*;
 import java.util.Map;
 
 public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException {
-        File file = new File("test1.bin");
+        String file1, file2;
+        if(args[0]=="test1.bin"){
+            file1= "test1_dis.txt";
+            file2 = "test1_sim.txt";
+        }
+        else if(args[0]== "test2.bin"){
+            file1 = "test2_dis.txt";
+            file2 = "test2_sim.txt";
+        }else if(args[0]== "test3.bin"){
+            file1 = "test3_dis.txt";
+            file2 = "test3_sim.txt";
+        }
+        File file = new File(args[0]);
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
-
+        PrintStream o = new PrintStream(new File(file1));
+        System.setOut(o);
         Hashtable<String, Integer> item = new Hashtable<String, Integer>();
         Map<Integer, Hashtable<String, Integer>> MEM = new HashMap<Integer, Hashtable<String, Integer>>();
         int i = 0;
@@ -72,8 +86,7 @@ public class mipssim {
                     // lw
                     System.out.printf("%-7s R%-2s %sR%s", "LW", item.get("rt") + ",", item.get("imm") + "(",
                             item.get("rs") + ")");
-                }
-                else if (binstr.substring(26, 32).equals("100010")) {
+                } else if (binstr.substring(26, 32).equals("100010")) {
                     // sub
                     System.out.printf("%-7s R%-2s R%-2s R%-2s", "SUB", item.get("rd") + ",", item.get("rs") + ",",
                             item.get("rt"));
@@ -106,7 +119,7 @@ public class mipssim {
                             item.get("shamt"));
                 } else if (binstr.substring(26, 32).equals("000000")) {
                     // SLL
-                    System.out.printf("%-7s R%-2s R%-2s #%-2s", "SLL", item.get("rd") + ",", item.get("rs") + ",",
+                    System.out.printf("%-7s R%-2s R%-2s #%-2s", "SLL", item.get("rd") + ",", item.get("rt") + ",",
                             item.get("shamt"));
                 } else if (binstr.substring(26, 32).equals("100000")) {
                     // ADD
@@ -125,37 +138,41 @@ public class mipssim {
         }
 
         dis.close();
+        o.close();
+
+        PrintStream b = new PrintStream(new File(file2));
+        System.setOut(b);
 
         // p2
         int[] R = new int[32];
         Arrays.fill(R, 0);
 
-       
-        // I don't even know what the data is??? 
+        // I don't even know what the data is???
         int[] D = new int[32];
         Arrays.fill(D, 0);
         int cycle = 1;
         /*
+         * 
+         * 
+         * I = MEM.get(PC);
+         * int opcode = I.get("opcode");
+         * if (opcode == 40) { // ADDI
+         * R[I.get("rt")] = R[I.get("rs")] + I.get("imm");
+         * } else if (opcode == 43) { // SW
+         * // MEM[ R[ I.get("rs")] + I.get("imm") ][I.get("asInt")]= R[ I.get("rt") ] ;
+         * // ----> i don't even know what this is supposed to do
+         * // print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm'])
+         * );
+         * }
+         */
 
-            
-                I = MEM.get(PC);
-                int opcode = I.get("opcode");
-                if (opcode == 40) { // ADDI
-                    R[I.get("rt")] = R[I.get("rs")] + I.get("imm");
-                } else if (opcode == 43) { // SW
-                    // MEM[ R[ I.get("rs")] + I.get("imm") ][I.get("asInt")]= R[ I.get("rt") ] ;
-                    // ----> i don't even know what this is supposed to do
-                    // print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm']) );
-                }
-            */
+        File file2 = new File("test1_dis.txt");
+        Scanner sim = new Scanner(file2);
+        String ins = "";
+        while (sim.hasNextLine()) {
 
-            File file2 = new File("test1_dis.txt");
-            Scanner sim = new Scanner(file2);
-            String ins = "";
-            while (sim.hasNextLine()) {
-                
-                ins = sim.nextLine();
-                if( !ins.contains("Invalid")){
+            ins = sim.nextLine();
+            if (!ins.contains("Invalid")) {
                 String addr = ins.substring(39, 42);
                 String mips = ins.substring(43);
 
@@ -163,96 +180,95 @@ public class mipssim {
 
                 System.out.println();
                 System.out.println("====================");
-                System.out.printf("cycle:%-2s%-2s%5s%s", cycle, addr,"" ,mips);
+                System.out.printf("cycle:%-2s%-5s%3s%s", cycle, addr, "", mips);
                 System.out.println();
-                //If satements to alter the R array and D array
-                    if(ins.contains("ADDI")){
-                        //not correct and i dont know why
-                        R[I.get("rt")]=R[I.get("rs")]+I.get("imm");
-                    }/*
-                    //some of these instructions do not change anything so we might not need
-                    //to include them. 
-                    else if(ins.contains("SW")){
+                // If satements to alter the R array and D array
+                if (ins.contains("ADDI")) {
+                    // not correct and i dont know why
+                    R[I.get("rt")] = (R[I.get("rs")] + I.get("imm"))*I.get("asInt");
+                } /*
+                   * //some of these instructions do not change anything so we might not need
+                   * //to include them.
+                   * else if(ins.contains("SW")){
+                   * 
+                   * }
+                   * else if(ins.contains("LW")){
+                   * 
+                   * }
+                   * else if(ins.contains("SUB")){
+                   * 
+                   * }
+                   * else if(ins.contains("J")){
+                   * 
+                   * }
+                   * else if(ins.contains("MUL")){
+                   * 
+                   * }
+                   * else if(ins.contains("NOP")){
+                   * 
+                   * }
+                   * else if(ins.contains("MOVZ")){
+                   * 
+                   * }
+                   * else if(ins.contains("BREAK")){
+                   * 
+                   * }
+                   * else if(ins.contains("JR")){
+                   * 
+                   * }
+                   * else if(ins.contains("BLTZ")){
+                   * //no change
+                   * }
+                   * else if(ins.contains("SRL")){
+                   * 
+                   * }
+                   * else if(ins.contains("SLL")){
+                   * 
+                   * }
+                   * else if(ins.contains("ADD")){
+                   * 
+                   * }
+                   * 
+                   */
 
-                    }
-                    else if(ins.contains("LW")){
-
-                    }
-                    else if(ins.contains("SUB")){
-
-                    }
-                    else if(ins.contains("J")){
-
-                    }
-                    else if(ins.contains("MUL")){
-
-                    }
-                    else if(ins.contains("NOP")){
-
-                    }
-                    else if(ins.contains("MOVZ")){
-
-                    }
-                    else if(ins.contains("BREAK")){
-
-                    }
-                    else if(ins.contains("JR")){
-
-                    }
-                    else if(ins.contains("BLTZ")){
-                        //no change
-                    }
-                    else if(ins.contains("SRL")){
-
-                    }
-                    else if(ins.contains("SLL")){
-
-                    }
-                    else if(ins.contains("ADD")){
-
-                    }
-
-                    */
-
-                    printRegisters(R);
-                    System.out.println();
-                    printData(D);
+                printRegisters(R);
+                System.out.println();
+                //printData(D);
                 cycle++;
-                }
-
             }
-        //}
-            sim.close();
+
         }
+        // }
+        sim.close();
+        b.close();
+    }
 
-
- 
-    
-    public static void printRegisters(int[] R){
+    public static void printRegisters(int[] R) {
         int reg = 0;
         System.out.println();
         System.out.print("registers:");
-        for(int l = 0; l < 32; l++){
-            if(l % 8 == 0){
+        for (int l = 0; l < 32; l++) {
+            if (l % 8 == 0) {
                 System.out.println();
-                System.out.printf("r%2.5s", reg); // not correct spacing need to replace spaces with 0
+                System.out.printf("r%2.5s:", reg); // not correct spacing need to replace spaces with 0
                 reg = reg + 8;
             }
-            System.out.printf("%2s", R[l]); // not correct spacing
+            System.out.printf("%5s", R[l]); // not correct spacing
 
         }
     }
-    public static void printData(int[] D){
+
+    public static void printData(int[] D) {
         int data = 172;
         System.out.println();
         System.out.print("data:");
-        for(int l = 0; l < 32; l++){
-            if(l % 8 == 0){
+        for (int l = 0; l < 32; l++) {
+            if (l % 8 == 0) {
                 System.out.println();
-                System.out.printf("%2.5s", data); //ditto
+                System.out.printf("%2.5s:", data); // ditto
                 data = data + 32;
             }
-            System.out.printf("%2s", D[l]); //ditto
+            System.out.printf("%2s", D[l]); // ditto
 
         }
     }
