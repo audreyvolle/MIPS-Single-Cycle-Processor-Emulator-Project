@@ -1,2 +1,3 @@
 all:
-	javac -Xlint mipssim.java
+	javac mipssim.java
+	java mipssim
