@@ -1,32 +1,30 @@
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.Reader;
 import java.util.*;
 import java.util.Map;
 
 public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException {
-        String file1, file2;
-        if(args[0]=="test1.bin"){
+        String inputFile = "test1.bin"; // will be = args[0];
+        String file1 = " ";
+        String file2 = " ";
+        
+        if(inputFile.equals("test1.bin")){
             file1= "test1_dis.txt";
             file2 = "test1_sim.txt";
         }
-        else if(args[0]== "test2.bin"){
+        else if(inputFile.equals("test2.bin")){
             file1 = "test2_dis.txt";
             file2 = "test2_sim.txt";
-        }else if(args[0]== "test3.bin"){
+        }else if(inputFile.equals("test3.bin")){
             file1 = "test3_dis.txt";
             file2 = "test3_sim.txt";
         }
-        File file = new File(args[0]);
+        File file = new File(inputFile);
         DataInputStream dis = new DataInputStream(new FileInputStream(file));
         PrintStream o = new PrintStream(new File(file1));
         System.setOut(o);
@@ -140,8 +138,8 @@ public class mipssim {
         dis.close();
         o.close();
 
-        PrintStream b = new PrintStream(new File(file2));
-        System.setOut(b);
+       PrintStream b = new PrintStream(file2);
+       System.setOut(b);
 
         // p2
         int[] R = new int[32];
@@ -151,34 +149,24 @@ public class mipssim {
         int[] D = new int[32];
         Arrays.fill(D, 0);
         int cycle = 1;
-        /*
-         * 
-         * 
-         * I = MEM.get(PC);
-         * int opcode = I.get("opcode");
-         * if (opcode == 40) { // ADDI
-         * R[I.get("rt")] = R[I.get("rs")] + I.get("imm");
-         * } else if (opcode == 43) { // SW
-         * // MEM[ R[ I.get("rs")] + I.get("imm") ][I.get("asInt")]= R[ I.get("rt") ] ;
-         * // ----> i don't even know what this is supposed to do
-         * // print('SW\tR{0}, {2}(R{1}) '.format(item['rt'], item['rs'], item['imm'])
-         * );
-         * }
-         */
-
-        File file2 = new File("test1_dis.txt");
-        Scanner sim = new Scanner(file2);
+       
+        DataInputStream sim = new DataInputStream(new FileInputStream(file1));
+        //Scanner sim = new Scanner(file1);
         String ins = "";
-        while (sim.hasNextLine()) {
+        while (sim.available() > 0) {
 
-            ins = sim.nextLine();
-            if (!ins.contains("Invalid")) {
-                String addr = ins.substring(39, 42);
+            ins = sim.readLine();
+            if (!ins.contains("Invalid")  && ins.length() > 13) {
+                String addr = ins.substring(40 , 43);
                 String mips = ins.substring(43);
+
+                if(addr.equals("96 ") || addr.equals(" 96")){
+                    addr = "96";
+                }
 
                 Hashtable<String, Integer> I = MEM.get(Integer.parseInt(addr));
 
-                System.out.println();
+                
                 System.out.println("====================");
                 System.out.printf("cycle:%-2s%-5s%3s%s", cycle, addr, "", mips);
                 System.out.println();
@@ -235,6 +223,7 @@ public class mipssim {
                 System.out.println();
                 //printData(D);
                 cycle++;
+                System.out.println();
             }
 
         }
