@@ -6,10 +6,7 @@ JCR = java
 	$(JC) $*.java
 
 CLASSES = \
-	MainDriver.java \
-	FSA.java \
-	State.java \
-	Transition.java 
+	Mippsim.java 
 
 TXT_FILES = \
 	test1.bin \
