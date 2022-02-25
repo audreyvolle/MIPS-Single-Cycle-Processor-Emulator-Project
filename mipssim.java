@@ -1,7 +1,9 @@
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
@@ -161,12 +163,16 @@ public class mipssim {
         Arrays.fill(D, 0);
         int cycle = 1;
        
-        DataInputStream sim = new DataInputStream(new FileInputStream(file1));
+        //DataInputStream sim = new DataInputStream(new FileInputStream(file1));
         //Scanner sim = new Scanner(file1);
+        //creates a buffering character input stream  
+        //StringBuffer sb=new StringBuffer();
+        BufferedReader sim = new BufferedReader(new FileReader(file1));
         String ins = "";
-        while (sim.available() > 0) {
+        
+        while ((ins = sim.readLine()) != null) { //sim.available() > 0
 
-            ins = sim.readLine();
+            //ins = sim.readLine();
             if (!ins.contains("Invalid")  && ins.length() > 13) {
                 String addr = ins.substring(40 , 43);
                 String mips = ins.substring(43);
@@ -235,12 +241,13 @@ public class mipssim {
                 //printData(D);
                 cycle++;
                 System.out.println();
+                ins = sim.readLine();
             }
 
         }
         // }
-        sim.close();
         b.close();
+        sim.close();
     }
 }
 
