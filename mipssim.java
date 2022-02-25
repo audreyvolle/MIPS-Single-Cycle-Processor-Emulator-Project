@@ -10,6 +10,17 @@ import java.util.Map;
 public class mipssim {
     public static void main(String[] args) throws IOException, FileNotFoundException {
         String inputFile = "test1.bin"; // will be = args[0];
+        for(int k = 1; k <= 3; k++){
+            if(k == 1){
+                inputFile = "test1.bin";
+            }
+            else if(k == 2){
+                inputFile = "test2.bin";
+            }
+            else{
+                inputFile = "test3.bin";
+            }
+        //}
         String file1 = " ";
         String file2 = " ";
         
@@ -130,7 +141,7 @@ public class mipssim {
                 }
 
                 System.out.println();
-                MEM.put(addr, item); // ----> need to make array or something to store each item???
+                MEM.put(addr, item); 
                 i = i + 4;
             }
         }
@@ -168,12 +179,12 @@ public class mipssim {
 
                 
                 System.out.println("====================");
-                System.out.printf("cycle:%-2s%-5s%3s%s", cycle, addr, "", mips);
+                System.out.printf("cycle:%-4s%-5s%3s%s", cycle, addr, "", mips);
                 System.out.println();
                 // If satements to alter the R array and D array
                 if (ins.contains("ADDI")) {
                     // not correct and i dont know why
-                    R[I.get("rt")] = (R[I.get("rs")] + I.get("imm"))*I.get("asInt");
+                    R[I.get("rt")] = (R[I.get("rs")] + I.get("imm"));
                 } /*
                    * //some of these instructions do not change anything so we might not need
                    * //to include them.
@@ -231,6 +242,7 @@ public class mipssim {
         sim.close();
         b.close();
     }
+}
 
     public static void printRegisters(int[] R) {
         int reg = 0;
