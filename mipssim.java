@@ -87,8 +87,13 @@ public class mipssim {
                     System.out.print("Invalid Instruction");
                 } else if (binstr.substring(1, 6).equals("01000")) {
                     // addi
+                   if(item.get("imm").equals(65535)){
+                        System.out.printf("%-7s R%-2s R%-2s #%-2s", "ADDI", item.get("rt") + ",", item.get("rs") + ",",
+                            "-1");
+                    } else{
                     System.out.printf("%-7s R%-2s R%-2s #%-2s", "ADDI", item.get("rt") + ",", item.get("rs") + ",",
                             item.get("imm"));
+                    }
                 } else if (binstr.substring(1, 6).equals("01011")) {
                     // sw
                     System.out.printf("%-7s R%-2s %sR%s", "SW", item.get("rt") + ",", item.get("imm") + "(",
