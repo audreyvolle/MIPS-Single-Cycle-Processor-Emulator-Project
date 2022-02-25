@@ -1,3 +1,8 @@
+all:
+	javac mipssim.java
+/*
+I literally think this is all we have to do.
+
 JC = javac
 JCR = java
 
@@ -28,3 +33,4 @@ exec-tests: classes
 
 
 .PHONY: default clean classes exec-tests
+*/
