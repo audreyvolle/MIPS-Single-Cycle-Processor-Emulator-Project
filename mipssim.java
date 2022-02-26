@@ -275,6 +275,7 @@ public class mipssim {
         System.out.println();
         System.out.print("registers:");
         for (int l = 0; l < 32; l++) {
+            if (l % 8 == 0) {
             System.out.println();
                 if(reg <= 8){
                     System.out.printf("r0%1.5s:", reg);
