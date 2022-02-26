@@ -141,6 +141,20 @@ public class mipssim {
                     // ADD
                     System.out.printf("%-7s R%-2s R%-2s R%-2s", "ADD", item.get("rd") + ",", item.get("rs") + ",",
                             item.get("rt"));
+                } else if (binstr.substring(26, 32).equals("100000")) {
+                    // ADD
+                    System.out.printf("%-7s R%-2s R%-2s R%-2s", "ADD", item.get("rd") + ",", item.get("rs") + ",",
+                            item.get("rt"));
+                }
+                else if (binstr.substring(26, 32).equals("100100")) {
+                    // AND
+                    System.out.printf("%-7s R%-2s R%-2s R%-2s", "AND", item.get("rs") + ",",
+                            item.get("rt") + "," , item.get("rd"));
+                }
+                else if (binstr.substring(26, 32).equals("100101")) {
+                    // OR
+                    System.out.printf("%-7s R%-2s R%-2s R%-2s", "OR", item.get("rs") + ",",
+                            item.get("rt") + "," , item.get("rd"));
                 }
 
                 else {
@@ -261,9 +275,12 @@ public class mipssim {
         System.out.println();
         System.out.print("registers:");
         for (int l = 0; l < 32; l++) {
-            if (l % 8 == 0) {
-                System.out.println();
-                System.out.printf("r%2.5s:", reg); // not correct spacing need to replace spaces with 0
+            System.out.println();
+                if(reg <= 8){
+                    System.out.printf("r0%1.5s:", reg);
+                }else{
+                System.out.printf("r%2.5s:", reg);
+                }
                 reg = reg + 8;
             }
             System.out.printf("%5s", R[l]); // not correct spacing
